@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from supabase import create_client, Client
 
-# Constants
+# constants
 ACTIVE_PLAYERS_URL = "https://www.nhl.com/stats/skaters?report=bios&reportType=season&seasonFrom=20242025&seasonTo=20242025&gameType=2&sort=a_skaterFullName&page={page}&pageSize=100"
 HISTORICAL_PLAYERS_URL = "https://www.nhl.com/stats/skaters?report=bios&reportType=season&seasonFrom=20082009&seasonTo=20242025&gameType=2&filter=gamesPlayed,gte,5&sort=a_skaterFullName&page={page}&pageSize=100"
 TABLE_XPATH = '//*[@id="season-tabpanel"]/span/div/div[2]/table'
@@ -24,11 +24,10 @@ def setup_driver():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return driver
 
-# Function to scrape one page from NHL stats page
+# scrape one page from NHL stats page
 def scrape_nhl_page(driver, url, is_active):
     driver.get(url)
     
-    # Wait for the table to load
     try:
         table = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, TABLE_XPATH))
@@ -97,7 +96,7 @@ def connect_to_supabase():
 # insert/update Supabase
 def update_supabase_with_players(players, supabase):
     for player in players:
-        # Check if the player ID exists in the database
+        # check if id exists in db
         response = supabase.table('players').select('id').eq('id', player['id']).execute()
 
         if response.data:
@@ -153,11 +152,9 @@ def quick_test_scrape_historical_data():
     try:
         print("Quick testing historical data scraping...")
 
-        # Navigate to the test URL
         driver.get(test_season_url)
-        time.sleep(2)  # Shortened wait time for testing purposes
+        time.sleep(2)
 
-        # Attempt to find the table
         try:
             table = driver.find_element(By.XPATH, TABLE_XPATH)
             table_html = table.get_attribute('outerHTML')
@@ -168,8 +165,7 @@ def quick_test_scrape_historical_data():
                 print("No rows found in the historical data table.")
                 return
 
-            # Parse only the first few rows for quick testing
-            test_rows = rows[1:3]  # Limit to two rows for speed
+            test_rows = rows[1:3]
             for row in test_rows:
                 cells = row.find_all('td')
                 if len(cells) > 1:

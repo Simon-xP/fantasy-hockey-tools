@@ -1,6 +1,8 @@
 import scrapers.nhl_skaters_info_scraper as nhl_skaters_info_scraper
 import moneypuck_skaters_scraper  # Replace with other scraper modules
 
+
+# runs all scrapers
 def main():
     print("Starting skaters main scraper...")
     nhl_skaters_info_scraper.run()
